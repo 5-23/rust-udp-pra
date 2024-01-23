@@ -2,7 +2,8 @@ use core::time;
 use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
-    time::Instant,
+    thread,
+    time::{Duration, Instant},
 };
 
 use renet::{
@@ -123,5 +124,6 @@ fn server(public_addr: SocketAddr) {
 
         // server에서 보낸다고 한 메세지를 뿌려줌
         transport.send_packets(&mut server);
+        thread::sleep(Duration::from_micros(50)) // 이거 안쓰면 여러개의 client가 접속 못할수도 있음
     }
 }

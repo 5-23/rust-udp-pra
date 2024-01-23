@@ -78,17 +78,19 @@ fn client(server_addr: SocketAddr, username: Username) {
                     client.send_message(DefaultChannel::ReliableOrdered, text.as_bytes().to_vec())
                 }
                 Err(TryRecvError::Empty) => {}
-                Err(TryRecvError::Disconnected) => panic!("Channel disconnected"),
+                Err(TryRecvError::Disconnected) => {
+                    panic!("disconnected")
+                }
             }
 
+            // 서버에서 보낸 정보를 받고 처리함
             while let Some(text) = client.receive_message(DefaultChannel::ReliableOrdered) {
-                let text = String::from_utf8(text.into()).unwrap();
+                let text = String::from_utf8(text.to_vec()).unwrap();
                 println!("{}", text);
             }
         }
-
         transport.send_packets(&mut client).unwrap();
-        thread::sleep(Duration::from_millis(50));
+        thread::sleep(Duration::from_micros(50)) // 이거 안쓰면 요청 많아서 client 죽음
     }
 }
 
